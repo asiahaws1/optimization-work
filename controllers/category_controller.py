@@ -7,8 +7,7 @@ from util.reflection import populate_object
 
 def add_category():
     post_data = request.form if request.form else request.get_json()
-    new_category = Categories.new_category_obj()
-    populate_object(new_category, post_data)
+    new_category = Categories(category_name=post_data.get("category_name"))
     db.session.add(new_category)
     db.session.commit()
     return jsonify({"message": "category created", "result": category_schema.dump(new_category)}), 201
