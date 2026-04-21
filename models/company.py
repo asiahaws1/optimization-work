@@ -1,26 +1,35 @@
+import marshmallow as ma
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
-from marshmallow import Schema, fields
 
 from db import db
 
 
 class Companies(db.Model):
-    __tablename__ = "Companies"
+    __tablename__ = 'Companies'
 
     company_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     company_name = db.Column(db.String(), nullable=False)
 
-    products = db.relationship("Products", back_populates="company")
+    products = db.relationship('Products', back_populates='company')
 
     def __init__(self, company_name):
         self.company_name = company_name
 
 
-class CompanySchema(Schema):
-    company_id = fields.String()
-    company_name = fields.String()
+    def new_company_obj():
+        return Companies('')
 
 
-company_schema = CompanySchema()
-companies_schema = CompanySchema(many=True)
+class CompaniesSchema(ma.Schema):
+    class Meta:
+        fields = ['company_id', 'company_name', 'products']
+
+    company_id = ma.fields.UUID()
+    company_name = ma.fields.String(required=True)
+
+    products = ma.fields.Nested('ProductsSchema', many=True, exclude=['company'])
+
+
+company_schema = CompaniesSchema()
+companies_schema = CompaniesSchema(many=True)

@@ -19,7 +19,8 @@ def get_companies():
 def add_company():
     post_data = request.form if request.form else request.json
 
-    new_company = Companies(company_name=post_data.get("company_name"))
+    new_company = Companies.new_company_obj()
+    populate_object(new_company, post_data)
 
     db.session.add(new_company)
     db.session.commit()

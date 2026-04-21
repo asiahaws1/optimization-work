@@ -18,11 +18,9 @@ def add_product():
     company_query = db.session.query(Companies).filter(Companies.company_id == post_data.get("company_id")).first()
     if not company_query:
         return jsonify({"message": "company not found"}), 404
-    new_product = Products(
-        product_name=post_data.get("product_name"),
-        company_id=post_data.get("company_id"),
-        active=post_data.get("active", True),
-    )
+    new_product = Products.new_product_obj()
+    populate_object(new_product, post_data)
+
     db.session.add(new_product)
     db.session.commit()
     return jsonify({"message": "product created", "result": product_schema.dump(new_product)}), 201

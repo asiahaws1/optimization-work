@@ -8,11 +8,10 @@ from util.reflection import populate_object
 
 def add_warranty():
     post_data = request.form if request.form else request.get_json()
-    new_warranty = Warranties(
-        product_id=post_data.get("product_id"),
-        length_months=post_data.get("length_months"),
-        description=post_data.get("description"),
-    )
+
+    new_warranty = Warranties.new_warranty_obj()
+    populate_object(new_warranty, post_data)
+
     db.session.add(new_warranty)
     db.session.commit()
     return jsonify({"message": "warranty created", "result": warranty_schema.dump(new_warranty)}), 201
